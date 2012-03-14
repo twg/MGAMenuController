@@ -14,13 +14,11 @@
 
 @synthesize theMenuController, tableData, tableView, drawerView;
 
-#define DRAWER_WIDTH 250
-
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
 {
     self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
     if (self) {
-        tableView = [[UITableView alloc] initWithFrame:CGRectMake(0, 0, DRAWER_WIDTH, [[UIScreen mainScreen] bounds].size.height) style:UITableViewStylePlain];
+        tableView = [[UITableView alloc] initWithFrame:CGRectMake(0, 0, [[UIScreen mainScreen] bounds].size.width, [[UIScreen mainScreen] bounds].size.height) style:UITableViewStylePlain];
         [tableView setSeparatorColor:[UIColor darkGrayColor]];
         [tableView setBackgroundColor:[UIColor scrollViewTexturedBackgroundColor]];
         [tableView setDelegate:self];
@@ -136,7 +134,7 @@
 
 
 - (UIView *) tableView:(UITableView *)aTableView viewForHeaderInSection:(NSInteger)section {
-    UIView* customView = [[UIView alloc] initWithFrame:CGRectMake(10.0, 0.0, DRAWER_WIDTH, [self tableView:self.tableView heightForHeaderInSection:section])];
+    UIView* customView = [[UIView alloc] initWithFrame:CGRectMake(10.0, 0.0, [[UIScreen mainScreen] bounds].size.width, [self tableView:self.tableView heightForHeaderInSection:section])];
     customView.backgroundColor = [UIColor viewFlipsideBackgroundColor];
     
     UILabel * headerLabel = [[UILabel alloc] initWithFrame:CGRectZero];

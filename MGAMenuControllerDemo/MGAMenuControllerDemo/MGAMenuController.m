@@ -72,6 +72,7 @@
 @synthesize containerView = _containerView;
 @synthesize navigationController = _navigationController, currentRootViewController = _currentRootViewController;
 
+#define DRAWER_WIDTH 250
 
 #pragma mark - Initializers
 
@@ -357,12 +358,12 @@
     [_containerView insertSubview:drawerVC.view atIndex:0];
     
     //Set drawer view frame
-    int drawerWidth = drawerVC.drawerView.frame.size.width;
-    int drawerX = (direction == kSHOW_LEFT) ? 0 : (_navigationController.view.frame.size.width-drawerWidth);
+    //int drawerWidth = drawerVC.drawerView.frame.size.width;
+    int drawerX = (direction == kSHOW_LEFT) ? 0 : (_navigationController.view.frame.size.width-DRAWER_WIDTH);
     [drawerVC.view setFrame:CGRectMake(0, 0, _navigationController.view.frame.size.width, _navigationController.view.frame.size.height)];
     drawerVC.drawerView.frame = CGRectMake(drawerX, 
                                            drawerVC.drawerView.frame.origin.y, 
-                                           drawerWidth, 
+                                           _navigationController.view.frame.size.width, 
                                            _navigationController.view.frame.size.height);
     
     //Add shadow view
@@ -377,7 +378,7 @@
                           delay:0.0 
                         options:UIViewAnimationOptionCurveEaseInOut
                      animations:^{
-                         int newX = (direction == kSHOW_LEFT) ? drawerWidth : -drawerWidth;
+                         int newX = (direction == kSHOW_LEFT) ? DRAWER_WIDTH : -DRAWER_WIDTH;
                          [_navigationController.view setFrame:CGRectMake(newX, 
                                                        _navigationController.view.frame.origin.y, 
                                                        _navigationController.view.frame.size.width, 
@@ -494,9 +495,9 @@
                          animations:^{
                              int offsetX = 0;
                              if (leftDrawerVisible) {
-                                 offsetX = _navigationController.view.frame.size.width-displayedLeftDrawer.drawerView.frame.size.width+20;
+                                 offsetX = _navigationController.view.frame.size.width-DRAWER_WIDTH+20;
                              } else {
-                                 offsetX = -(_navigationController.view.frame.size.width-displayedRightDrawer.drawerView.frame.size.width+20);
+                                 offsetX = -(_navigationController.view.frame.size.width-DRAWER_WIDTH+230);
                              }
                              [_navigationController.view setFrame:CGRectMake(_navigationController.view.frame.origin.x+offsetX, 
                                                              _navigationController.view.frame.origin.y, 
