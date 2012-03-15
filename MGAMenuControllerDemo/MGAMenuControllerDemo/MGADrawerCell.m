@@ -11,42 +11,45 @@
 @implementation MGADrawerCell
 
 @synthesize accessoryPosition = _accessoryPosition;
+@synthesize accessoryTag = _accessoryTag;
 
 - (id)initWithStyle:(UITableViewCellStyle)style reuseIdentifier:(NSString *)reuseIdentifier
 {
     self = [super initWithStyle:style reuseIdentifier:reuseIdentifier];
     if (self) {
         // Initialization code
+        self.accessoryTag = -1;
     }
     return self;
 }
 
 - (void)layoutSubviews {
-    //if (self.accessoryView) {
-    //self.accessoryView.frame = CGRectMake(self.accessoryView.frame.origin.x - 100, self.accessoryView.frame.origin.y, self.accessoryView.frame.size.width, self.accessoryView.frame.size.height);
-    //}
     [super layoutSubviews];
     
     if (self.indentationLevel == 0) {
         CGRect r;
         if (self.accessoryView) {
+            // If a custom accessory view is set
             r = self.accessoryView.frame;
             r.origin.x = self.accessoryPosition;
             self.accessoryView.frame = r;
         }
         else {
+            // Find accessory view in array of cell's subviews
             UIView* defaultAccessoryView = nil;
             for (UIView* subview in self.subviews) {
-                if (subview != self.textLabel && 
+                if (subview.tag == self.accessoryTag || (subview != self.textLabel && 
                     subview != self.detailTextLabel && 
                     subview != self.backgroundView && 
                     subview != self.contentView &&
                     subview != self.selectedBackgroundView &&
                     subview != self.imageView &&
-                    subview.frame.size.width == 30 &&
-                    subview.frame.size.height == 43) {
+                    subview.frame.origin.x == 290 &&
+                    subview.frame.origin.y == 0)) {
                     defaultAccessoryView = subview;
-                    //NSLog(@"%@", NSStringFromCGRect(subview.frame));
+                    self.accessoryTag = 1;
+                    subview.tag = self.accessoryTag;
+                    NSLog(@"%@", NSStringFromCGRect(subview.frame));
                     break;
                 }
             }

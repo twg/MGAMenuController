@@ -11,5 +11,6 @@
 @interface MGADrawerCell : UITableViewCell
 
 @property (nonatomic, assign) NSInteger accessoryPosition;
+@property (nonatomic, assign) NSInteger accessoryTag;
 
 @end
