@@ -23,6 +23,7 @@
 		D4BF4ABE14AEB21E00A3B061 /* menuIcon.png in Resources */ = {isa = PBXBuildFile; fileRef = D4BF4ABC14AEB21E00A3B061 /* menuIcon.png */; };
 		D4BF4ABF14AEB21E00A3B061 /* menuIcon@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = D4BF4ABD14AEB21E00A3B061 /* menuIcon@2x.png */; };
 		D4BF4AD714B2991600A3B061 /* DrawerExample2.m in Sources */ = {isa = PBXBuildFile; fileRef = D4BF4AD614B2991600A3B061 /* DrawerExample2.m */; };
+		D9C8BA5B15113D3C007F7EE1 /* MGADrawerCell.m in Sources */ = {isa = PBXBuildFile; fileRef = D9C8BA5A15113D3C007F7EE1 /* MGADrawerCell.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -54,6 +55,8 @@
 		D4BF4ABD14AEB21E00A3B061 /* menuIcon@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "menuIcon@2x.png"; sourceTree = "<group>"; };
 		D4BF4AD514B2991600A3B061 /* DrawerExample2.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DrawerExample2.h; sourceTree = "<group>"; };
 		D4BF4AD614B2991600A3B061 /* DrawerExample2.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DrawerExample2.m; sourceTree = "<group>"; };
+		D9C8BA5915113D3C007F7EE1 /* MGADrawerCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MGADrawerCell.h; sourceTree = "<group>"; };
+		D9C8BA5A15113D3C007F7EE1 /* MGADrawerCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MGADrawerCell.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -129,6 +132,8 @@
 				D4528DD714AEAC8200F8183B /* MGAMenuController.m */,
 				D4528DD814AEAC8200F8183B /* MGADrawerViewController.h */,
 				D4528DD914AEAC8200F8183B /* MGADrawerViewController.m */,
+				D9C8BA5915113D3C007F7EE1 /* MGADrawerCell.h */,
+				D9C8BA5A15113D3C007F7EE1 /* MGADrawerCell.m */,
 				D4528DDA14AEAC8200F8183B /* MGADropShadowView.h */,
 				D4528DDB14AEAC8200F8183B /* MGADropShadowView.m */,
 			);
@@ -225,6 +230,7 @@
 				D4528DE914AEAC8200F8183B /* GreenViewController.m in Sources */,
 				D4528DEA14AEAC8200F8183B /* MainViewController.m in Sources */,
 				D4BF4AD714B2991600A3B061 /* DrawerExample2.m in Sources */,
+				D9C8BA5B15113D3C007F7EE1 /* MGADrawerCell.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

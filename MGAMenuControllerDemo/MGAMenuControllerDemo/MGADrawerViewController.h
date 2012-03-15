@@ -15,13 +15,14 @@ typedef enum {
 
 
 @interface MGADrawerViewController: UIViewController <MGADrawerViewControllerProtocol, UITableViewDataSource, UITableViewDelegate> {
-    int drawerWidth;
     int sectionIndex;
 }
 
 @property (nonatomic, strong) MGAMenuController *theMenuController;
 @property (nonatomic, strong) UITableView *tableView;
 @property (nonatomic, strong) NSMutableArray *tableData;
+@property (nonatomic, assign) NSInteger drawerWidth;
+@property (nonatomic, assign) BOOL isLeftDrawer;
 
 - (void) actionExample;
 

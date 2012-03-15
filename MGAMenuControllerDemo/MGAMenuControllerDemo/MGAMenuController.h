@@ -84,6 +84,9 @@ typedef enum {
 @required
 /** A reference to the view of the drawer itself. This should be a subview of a view that is 320x480 */
 @property (nonatomic, strong) UIView *drawerView;
+/** Width used to adjust tableview cells. Prevents cell's subviews from being overlapped by rootViewController */
+@property (nonatomic, assign) NSInteger drawerWidth;
+@property (nonatomic, assign) BOOL isLeftDrawer;
 
 @optional
 /** The implementor should save a reference to the MenuController in order to perform actions */

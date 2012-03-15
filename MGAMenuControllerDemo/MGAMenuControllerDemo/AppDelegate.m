@@ -26,7 +26,7 @@
     [menuController setLeftDrawer:leftDrawer];
     
     //Uncommenting this will add a default RightDrawer
-    //[menuController setRightDrawer:rightDrawer];
+    [menuController setRightDrawer:rightDrawer];
 
 
     //Uncommenting this will cause cause the default navigation buttons to be hidden

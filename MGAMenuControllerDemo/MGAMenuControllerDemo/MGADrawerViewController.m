@@ -4,6 +4,7 @@
 //  Copyright (c) 2011 Mattieu Gamache-Asselin. All rights reserved.
 
 #import "MGADrawerViewController.h"
+#import "MGADrawerCell.h"
 #import "MGAMenuController.h"
 #import "MainViewController.h"
 #import "BlueViewController.h"
@@ -13,17 +14,20 @@
 @implementation MGADrawerViewController
 
 @synthesize theMenuController, tableData, tableView, drawerView;
+@synthesize drawerWidth = _drawerWidth;
+@synthesize isLeftDrawer = _isLeftDrawer;
 
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
 {
     self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
     if (self) {
+        self.drawerWidth = 250;
         tableView = [[UITableView alloc] initWithFrame:CGRectMake(0, 0, [[UIScreen mainScreen] bounds].size.width, [[UIScreen mainScreen] bounds].size.height) style:UITableViewStylePlain];
         [tableView setSeparatorColor:[UIColor darkGrayColor]];
         [tableView setBackgroundColor:[UIColor scrollViewTexturedBackgroundColor]];
         [tableView setDelegate:self];
         [tableView setDataSource:self];
-        
+                
         //Test Data
         void (^actionBlock)() = ^{        
             UIActionSheet *sheet = [[UIActionSheet alloc] initWithTitle:@"Test sheet" delegate:self cancelButtonTitle:@"Cancel" destructiveButtonTitle:@"asd" otherButtonTitles: nil];
@@ -84,6 +88,8 @@
 #pragma mark - TableView Delegate
 
 - (void)tableView:(UITableView *)aTableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
+    [tableView deselectRowAtIndexPath:indexPath animated:YES];
+    
     NSDictionary *currentRow = [[tableData objectAtIndex:indexPath.section] objectAtIndex:indexPath.row];
     DrawerRowType rowType = [[currentRow objectForKey:@"rowType"] intValue];
     
@@ -94,10 +100,10 @@
     } else if (rowType == kACTION_BLOCK) {
         void (^actionBlock)() = [currentRow objectForKey:@"object"];
         actionBlock();
-        [tableView deselectRowAtIndexPath:[tableView indexPathForSelectedRow] animated:YES]; 
+        //[tableView deselectRowAtIndexPath:[tableView indexPathForSelectedRow] animated:YES]; 
     } else if (rowType == kACTION_SEL) {
         [[currentRow objectForKey:@"target"] performSelector:[[currentRow objectForKey:@"object"] pointerValue]];
-        [tableView deselectRowAtIndexPath:[tableView indexPathForSelectedRow] animated:YES];
+        //[tableView deselectRowAtIndexPath:[tableView indexPathForSelectedRow] animated:YES];
     }
 }
 
@@ -112,9 +118,18 @@
     static NSString *CellIdentifier = @"Cell";
     
     // Acquire the cell. 
-    UITableViewCell *cell = [aTableView dequeueReusableCellWithIdentifier:CellIdentifier];
+    MGADrawerCell *cell = [aTableView dequeueReusableCellWithIdentifier:CellIdentifier];
     if (cell == nil) {
-        cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:CellIdentifier];
+        cell = [[MGADrawerCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:CellIdentifier];
+        cell.accessoryPosition = self.drawerWidth - 40;
+        cell.indentationWidth = [UIScreen mainScreen].bounds.size.width - self.drawerWidth + 10;
+        cell.indentationLevel = !self.isLeftDrawer;
+        if (indexPath.row > 3) {
+            cell.accessoryType = UITableViewCellAccessoryNone;
+        }
+        else {
+            cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
+        }
     }
     
     [cell setSelectionStyle:UITableViewCellSelectionStyleGray];
@@ -122,19 +137,21 @@
     cell.textLabel.text = [[[tableData objectAtIndex:indexPath.section] objectAtIndex:indexPath.row] objectForKey:@"title"];
     cell.textLabel.textColor = [UIColor blackColor];
     cell.textLabel.font = [UIFont systemFontOfSize:16];
-    DrawerRowType rowType = [[[[tableData objectAtIndex:indexPath.section] objectAtIndex:indexPath.row] objectForKey:@"action"] intValue];
+    DrawerRowType rowType = [[[[tableData objectAtIndex:indexPath.section] objectAtIndex:indexPath.row] objectForKey:@"rowType"] intValue];
     if (rowType == kACTION_SEL || rowType == kACTION_BLOCK) {
         cell.accessoryType = UITableViewCellAccessoryNone;
     } else {
         cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
     }
     
+    [cell layoutIfNeeded];
+    
     return cell;
 }
 
 
 - (UIView *) tableView:(UITableView *)aTableView viewForHeaderInSection:(NSInteger)section {
-    UIView* customView = [[UIView alloc] initWithFrame:CGRectMake(10.0, 0.0, [[UIScreen mainScreen] bounds].size.width, [self tableView:self.tableView heightForHeaderInSection:section])];
+    UIView* customView = [[UIView alloc] initWithFrame:CGRectMake(self.isLeftDrawer ? 10.0 : [UIScreen mainScreen].bounds.size.width - self.drawerWidth + 10, 0.0, [[UIScreen mainScreen] bounds].size.width, [self tableView:self.tableView heightForHeaderInSection:section])];
     customView.backgroundColor = [UIColor viewFlipsideBackgroundColor];
     
     UILabel * headerLabel = [[UILabel alloc] initWithFrame:CGRectZero];
@@ -142,7 +159,7 @@
     headerLabel.opaque = NO;
     headerLabel.textColor = [UIColor grayColor];
     headerLabel.font = [UIFont boldSystemFontOfSize:18];
-    headerLabel.frame = CGRectMake(11,0, customView.frame.size.width, customView.frame.size.height);
+    headerLabel.frame = CGRectMake(self.isLeftDrawer ? 11 : [UIScreen mainScreen].bounds.size.width - self.drawerWidth + 10,0, customView.frame.size.width, customView.frame.size.height);
     headerLabel.textAlignment = UITextAlignmentLeft;
     headerLabel.text = [self tableView:aTableView titleForHeaderInSection:section];
     [customView addSubview:headerLabel];

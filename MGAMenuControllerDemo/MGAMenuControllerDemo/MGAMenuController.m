@@ -213,6 +213,8 @@
         
         //Set instance variable
         _leftDrawer = drawerViewController;
+        _leftDrawer.drawerWidth = DRAWER_WIDTH;
+        _leftDrawer.isLeftDrawer = YES;
         
         //Set self as menu controller
         [_leftDrawer setMenuController:self];
@@ -233,6 +235,8 @@
         
         //Set instance variable
         _rightDrawer = drawerViewController;
+        _rightDrawer.drawerWidth = DRAWER_WIDTH;
+        _rightDrawer.isLeftDrawer = NO;
 
         //Set self as menu controller
         [_rightDrawer setMenuController:self];
@@ -359,9 +363,9 @@
     
     //Set drawer view frame
     //int drawerWidth = drawerVC.drawerView.frame.size.width;
-    int drawerX = (direction == kSHOW_LEFT) ? 0 : (_navigationController.view.frame.size.width-DRAWER_WIDTH);
+    //int drawerX = (direction == kSHOW_LEFT) ? 0 : (_navigationController.view.frame.size.width-DRAWER_WIDTH);
     [drawerVC.view setFrame:CGRectMake(0, 0, _navigationController.view.frame.size.width, _navigationController.view.frame.size.height)];
-    drawerVC.drawerView.frame = CGRectMake(drawerX, 
+    drawerVC.drawerView.frame = CGRectMake(0, 
                                            drawerVC.drawerView.frame.origin.y, 
                                            _navigationController.view.frame.size.width, 
                                            _navigationController.view.frame.size.height);

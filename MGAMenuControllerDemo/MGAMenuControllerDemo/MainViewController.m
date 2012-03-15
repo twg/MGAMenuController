@@ -33,9 +33,9 @@
 }
 
 // OVERRIDES THE DEFAULT DRAWER SET IN THE MENU CONTROLLER PROPERTIES
-- (UIViewController<MGADrawerViewControllerProtocol> *)rightDrawerForMenuController:(MGAMenuController *)menuController {
-    return [[DrawerExample2 alloc] init];
-}
+//- (UIViewController<MGADrawerViewControllerProtocol> *)rightDrawerForMenuController:(MGAMenuController *)menuController {
+//    return [[DrawerExample2 alloc] init];
+//}
 
 // OVERRIDES THE DEFAULT DRAWER SET IN THE MENU CONTROLLER PROPERTIES
 //- (UIViewController<MGADrawerViewControllerProtocol> *)leftDrawerForMenuController:(MGAMenuController *)menuController {
