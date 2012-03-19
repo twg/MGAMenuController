@@ -67,12 +67,16 @@
 //Implementation
 @implementation MGAMenuController
 
-@synthesize leftDrawer = _leftDrawer, rightDrawer = _rightDrawer;
+@synthesize leftDrawer = _leftDrawer;
+@synthesize rightDrawer = _rightDrawer;
+
+@synthesize leftDrawerWidth = _leftDrawerWidth;
+@synthesize rightDrawerWidth = _rightDrawerWidth;
 
 @synthesize containerView = _containerView;
-@synthesize navigationController = _navigationController, currentRootViewController = _currentRootViewController;
+@synthesize navigationController = _navigationController;
+@synthesize currentRootViewController = _currentRootViewController;
 
-#define DRAWER_WIDTH 250
 
 #pragma mark - Initializers
 
@@ -112,9 +116,11 @@
         rightBarButton = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"menuIcon.png"] style:UIBarButtonItemStyleBordered target:self action:@selector(showRightDrawer)];
         leftBarButton = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"menuIcon.png"] style:UIBarButtonItemStyleBordered target:self action:@selector(showLeftDrawer)];
 
+        self.leftDrawerWidth = 250;
+        self.rightDrawerWidth = 250;
         
-        [self setLeftDrawer:leftDrawer];
-        [self setRightDrawer:rightDrawer];
+        [self addLeftDrawer:leftDrawer];
+        [self addRightDrawer:rightDrawer];
         
         //Don't set nil as rootView
         if (viewController)
@@ -202,44 +208,40 @@
     }
 }
 
-- (void)setLeftDrawer:(UIViewController<MGADrawerViewControllerProtocol> *)drawerViewController 
+- (void)addLeftDrawer:(UIViewController<MGADrawerViewControllerProtocol> *)drawerViewController 
 {
-    if (drawerViewController && drawerViewController != _leftDrawer) {
+    if (drawerViewController && drawerViewController != self.leftDrawer) {
         
-        if (_leftDrawer) {
-            [_leftDrawer willMoveToParentViewController:nil];
-            [_leftDrawer removeFromParentViewController];
+        if (self.leftDrawer) {
+            [self.leftDrawer willMoveToParentViewController:nil];
+            [self.leftDrawer removeFromParentViewController];
         }
         
         //Set instance variable
-        _leftDrawer = drawerViewController;
-        _leftDrawer.drawerWidth = DRAWER_WIDTH;
-        _leftDrawer.isLeftDrawer = YES;
+        self.leftDrawer = drawerViewController;        
         
         //Set self as menu controller
-        [_leftDrawer setMenuController:self];
+        self.leftDrawer.menuController = self;
         
         //Add navigation bar button
         [self validateDisplayedDrawer];
     }
 }
 
-- (void) setRightDrawer:(UIViewController<MGADrawerViewControllerProtocol> *)drawerViewController 
+- (void) addRightDrawer:(UIViewController<MGADrawerViewControllerProtocol> *)drawerViewController 
 {
-    if (drawerViewController && drawerViewController != _rightDrawer) {
+    if (drawerViewController && drawerViewController != self.rightDrawer) {
         
-        if (_rightDrawer) {
-            [_rightDrawer willMoveToParentViewController:nil];
-            [_rightDrawer removeFromParentViewController];
+        if (self.rightDrawer) {
+            [self.rightDrawer willMoveToParentViewController:nil];
+            [self.rightDrawer removeFromParentViewController];
         }
         
         //Set instance variable
-        _rightDrawer = drawerViewController;
-        _rightDrawer.drawerWidth = DRAWER_WIDTH;
-        _rightDrawer.isLeftDrawer = NO;
-
+        self.rightDrawer = drawerViewController;
+        
         //Set self as menu controller
-        [_rightDrawer setMenuController:self];
+        self.rightDrawer.menuController = self;
         
         //Add navigation bar button
         [self validateDisplayedDrawer]; 
@@ -248,7 +250,7 @@
 
 - (void) validateDisplayedDrawer 
 {
-    if (!_currentRootViewController)
+    if (!self.currentRootViewController)
         return;
     
     //Check if left drawer needs to be set to overridden
@@ -256,8 +258,8 @@
         displayedLeftDrawer = overriddenLeftDrawer;
         
     //Check if left drawer needs to be set to default. This includes setting to nil if _leftDrawer was not set.
-    } else if (!leftDrawerOverridden && displayedLeftDrawer != _leftDrawer) {
-        displayedLeftDrawer = _leftDrawer;
+    } else if (!leftDrawerOverridden && displayedLeftDrawer != self.leftDrawer) {
+        displayedLeftDrawer = self.leftDrawer;
     }
     
     //Same for right
@@ -359,34 +361,34 @@
 {
     //Set up child viewcontroller relationship
     [self addChildViewController:drawerVC];
-    [_containerView insertSubview:drawerVC.view atIndex:0];
+    [self.containerView insertSubview:drawerVC.view atIndex:0];
     
     //Set drawer view frame
     //int drawerWidth = drawerVC.drawerView.frame.size.width;
     //int drawerX = (direction == kSHOW_LEFT) ? 0 : (_navigationController.view.frame.size.width-DRAWER_WIDTH);
-    [drawerVC.view setFrame:CGRectMake(0, 0, _navigationController.view.frame.size.width, _navigationController.view.frame.size.height)];
+    [drawerVC.view setFrame:CGRectMake(0, 0, self.navigationController.view.frame.size.width, self.navigationController.view.frame.size.height)];
     drawerVC.drawerView.frame = CGRectMake(0, 
                                            drawerVC.drawerView.frame.origin.y, 
-                                           _navigationController.view.frame.size.width, 
-                                           _navigationController.view.frame.size.height);
+                                           self.navigationController.view.frame.size.width, 
+                                           self.navigationController.view.frame.size.height);
     
     //Add shadow view
     int shadowX = (direction == kSHOW_LEFT) ? -20 : 20;
     dropShadowView = [[MGADropShadowView alloc] init];
-    [dropShadowView setFrame:CGRectMake(shadowX, 0, _navigationController.view.frame.size.width, _navigationController.view.frame.size.height)];
+    [dropShadowView setFrame:CGRectMake(shadowX, 0, self.navigationController.view.frame.size.width, self.navigationController.view.frame.size.height)];
     [dropShadowView setShadowDirection:(direction == kSHOW_LEFT) ? kLEFT : kRIGHT];
-    [_containerView insertSubview:dropShadowView atIndex:1];
+    [self.containerView insertSubview:dropShadowView atIndex:1];
     
     //Perform animation to show the drawer
     [UIView animateWithDuration:0.3
                           delay:0.0 
                         options:UIViewAnimationOptionCurveEaseInOut
                      animations:^{
-                         int newX = (direction == kSHOW_LEFT) ? DRAWER_WIDTH : -DRAWER_WIDTH;
-                         [_navigationController.view setFrame:CGRectMake(newX, 
-                                                       _navigationController.view.frame.origin.y, 
-                                                       _navigationController.view.frame.size.width, 
-                                                       _navigationController.view.frame.size.height)];
+                         int newX = (direction == kSHOW_LEFT) ? self.leftDrawerWidth : -self.rightDrawerWidth;
+                         [self.navigationController.view setFrame:CGRectMake(newX, 
+                                                       self.navigationController.view.frame.origin.y, 
+                                                       self.navigationController.view.frame.size.width, 
+                                                       self.navigationController.view.frame.size.height)];
                          [dropShadowView setFrame:CGRectMake((direction == kSHOW_LEFT) ? newX-20 : newX+20, 
                                                              dropShadowView.frame.origin.y, 
                                                              dropShadowView.frame.size.width, 
@@ -499,9 +501,9 @@
                          animations:^{
                              int offsetX = 0;
                              if (leftDrawerVisible) {
-                                 offsetX = _navigationController.view.frame.size.width-DRAWER_WIDTH+20;
+                                 offsetX = _navigationController.view.frame.size.width-self.leftDrawerWidth+20;
                              } else {
-                                 offsetX = -(_navigationController.view.frame.size.width-DRAWER_WIDTH+230);
+                                 offsetX = -(_navigationController.view.frame.size.width-self.rightDrawerWidth+230);
                              }
                              [_navigationController.view setFrame:CGRectMake(_navigationController.view.frame.origin.x+offsetX, 
                                                              _navigationController.view.frame.origin.y, 

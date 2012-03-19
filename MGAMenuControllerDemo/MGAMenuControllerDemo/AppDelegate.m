@@ -21,12 +21,12 @@
     MGADrawerViewController *leftDrawer = [[MGADrawerViewController alloc] init];
     MGADrawerViewController *rightDrawer = [[MGADrawerViewController alloc] init];
    
-    MGAMenuController *menuController = [[MGAMenuController alloc] init];
-    [menuController setRootViewController:mainVC];
-    [menuController setLeftDrawer:leftDrawer];
+    MGAMenuController *menuController = [[MGAMenuController alloc] initWithLeftDrawer:leftDrawer RightDrawer:rightDrawer andRootViewController:mainVC];
+    //[menuController setRootViewController:mainVC];
+    //[menuController setLeftDrawer:leftDrawer];
     
     //Uncommenting this will add a default RightDrawer
-    [menuController setRightDrawer:rightDrawer];
+    //[menuController setRightDrawer:rightDrawer];
 
 
     //Uncommenting this will cause cause the default navigation buttons to be hidden

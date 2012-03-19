@@ -9,18 +9,17 @@
 typedef enum {
     kPUSH,
     kSET_ROOT,
-    kACTION_BLOCK,
-    kACTION_SEL
+    kACTION_BLOCK
 } DrawerRowType;
 
 
-@interface MGADrawerViewController: UIViewController <MGADrawerViewControllerProtocol, UITableViewDataSource, UITableViewDelegate> {
-    int sectionIndex;
-}
+@interface MGADrawerViewController: UIViewController <MGADrawerViewControllerProtocol, UITableViewDataSource, UITableViewDelegate>
 
-@property (nonatomic, strong) MGAMenuController *theMenuController;
+@property (nonatomic, weak) MGAMenuController *menuController;
 @property (nonatomic, strong) UITableView *tableView;
 @property (nonatomic, strong) NSMutableArray *tableData;
+@property (nonatomic, strong) UIImage *chevronImage;
+@property (nonatomic, strong) UIImage *chevronImageActive;
 @property (nonatomic, assign) NSInteger drawerWidth;
 @property (nonatomic, assign) BOOL isLeftDrawer;
 
