@@ -495,7 +495,7 @@
                              if (leftDrawerVisible) {
                                  offsetX = self.navigationController.view.frame.size.width-self.leftDrawerWidth+20;
                              } else {
-                                 offsetX = -(self.navigationController.view.frame.size.width-self.rightDrawerWidth+230);
+                                 offsetX = -(self.navigationController.view.frame.size.width-self.rightDrawerWidth + 20);
                              }
                              [self.navigationController.view setFrame:CGRectMake(self.navigationController.view.frame.origin.x+offsetX, 
                                                              self.navigationController.view.frame.origin.y, 

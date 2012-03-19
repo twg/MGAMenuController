@@ -12,12 +12,6 @@ typedef enum {
     kHIDE_LEFT
 } SlideDirection;
 
-typedef enum {
-    kRIGHT_DRAWER,
-    kLEFT_DRAWER,
-    kINVALID_DRAWER
-} DrawerSide;
-
 @protocol MGADrawerViewControllerProtocol;
 
 
@@ -66,11 +60,6 @@ typedef enum {
 
 /** Set the rootViewController and perform animation. Should be used from the side drawer view controller */
 - (void) changeRootViewController:(UIViewController *) viewController animated:(BOOL)animated;
-
-/** Convinience method to execute selector on current rootViewController */
-- (void) sendDataToRootViewController:(id)data atSelector:(SEL)selector;
-
-- (DrawerSide)sideForDrawer:(UIViewController<MGADrawerViewControllerProtocol>*)drawer;
 
 @end
 
