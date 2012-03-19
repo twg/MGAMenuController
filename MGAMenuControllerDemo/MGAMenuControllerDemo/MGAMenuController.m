@@ -43,9 +43,6 @@
     BOOL rightDrawerVisible;
     
 }
-/** Current view controller as root in the nav stack */
-@property (nonatomic, strong) UIViewController *currentRootViewController;
-
 /** Wrapper view for what is displayed by the MGAMenuController */
 @property (nonatomic, strong) UIView *containerView;
 
@@ -75,7 +72,7 @@
 
 @synthesize containerView = _containerView;
 @synthesize navigationController = _navigationController;
-@synthesize currentRootViewController = _currentRootViewController;
+@synthesize rootViewController = _rootViewController;
 
 
 #pragma mark - Initializers
@@ -101,16 +98,16 @@
         rightDrawerOverridden = NO;
         
         //Initialize wrapper view
-        _containerView = [[UIView alloc] initWithFrame:[UIScreen mainScreen].applicationFrame];
-        [_containerView setBackgroundColor:[UIColor blueColor]];
+        self.containerView = [[UIView alloc] initWithFrame:[UIScreen mainScreen].applicationFrame];
+        [self.containerView setBackgroundColor:[UIColor blueColor]];
         
         //Create navigation controller
-        _navigationController = [[UINavigationController alloc] init];
-        [_navigationController setDelegate:self];
+        self.navigationController = [[UINavigationController alloc] init];
+        [self.navigationController setDelegate:self];
         
         //Add the nav controller as a child of the MenuController.
         //PS: The viewcontroller set on the nav stack will NOT have to be set as childs since this is handled by the navigationController
-        [self addChildViewController:_navigationController];
+        [self addChildViewController:self.navigationController];
         
         //Create navigation bar button
         rightBarButton = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"menuIcon.png"] style:UIBarButtonItemStyleBordered target:self action:@selector(showRightDrawer)];
@@ -135,14 +132,14 @@
 - (void)loadView 
 {
     //Create container's view
-    _containerView.autoresizingMask = UIViewAutoresizingFlexibleWidth|UIViewAutoresizingFlexibleHeight;
-    [self setView:_containerView];
+    self.containerView.autoresizingMask = UIViewAutoresizingFlexibleWidth|UIViewAutoresizingFlexibleHeight;
+    [self setView:self.containerView];
     
     //Navigation Controller
-    [_navigationController.view setFrame:CGRectMake(_containerView.frame.origin.x, 
-                                                    _containerView.frame.origin.y-20, 
-                                                    _containerView.frame.size.width,
-                                                    _containerView.frame.size.height)];    
+    [self.navigationController.view setFrame:CGRectMake(self.containerView.frame.origin.x, 
+                                                    self.containerView.frame.origin.y-20, 
+                                                    self.containerView.frame.size.width,
+                                                    self.containerView.frame.size.height)];    
 }
 
 
@@ -150,7 +147,7 @@
 
 - (void) setCurrentRootViewController:(UIViewController *)rootViewController 
 {
-    if (rootViewController && rootViewController != _currentRootViewController) {
+    if (rootViewController && rootViewController != self.rootViewController) {
                 
         //Remove previos rootVC's view if necessary
         if (rootView)
@@ -158,10 +155,10 @@
         rootView = rootViewController.view;
         
         //Remove navigationController's view
-        [_navigationController.view removeFromSuperview];
+        [self.navigationController.view removeFromSuperview];
         
         //Set new rootVC
-        _currentRootViewController = rootViewController;
+        self.rootViewController = rootViewController;
         
         
         //Clean previous override (if any)
@@ -203,8 +200,8 @@
         [self validateDisplayedDrawer];
         
         //Add new rootVC's view to stack
-        [_navigationController setViewControllers:[NSArray arrayWithObject:_currentRootViewController]];
-        [_containerView addSubview:_navigationController.view];
+        [self.navigationController setViewControllers:[NSArray arrayWithObject:self.rootViewController]];
+        [self.containerView addSubview:self.navigationController.view];
     }
 }
 
@@ -250,14 +247,14 @@
 
 - (void) validateDisplayedDrawer 
 {
-    if (!self.currentRootViewController)
+    if (!self.rootViewController)
         return;
     
     //Check if left drawer needs to be set to overridden
     if (leftDrawerOverridden && displayedLeftDrawer != overriddenLeftDrawer) {
         displayedLeftDrawer = overriddenLeftDrawer;
         
-    //Check if left drawer needs to be set to default. This includes setting to nil if _leftDrawer was not set.
+    //Check if left drawer needs to be set to default. This includes setting to nil if self.leftDrawer was not set.
     } else if (!leftDrawerOverridden && displayedLeftDrawer != self.leftDrawer) {
         displayedLeftDrawer = self.leftDrawer;
     }
@@ -265,8 +262,8 @@
     //Same for right
     if (rightDrawerOverridden && displayedRightDrawer != overriddenRightDrawer) {
         displayedRightDrawer = overriddenRightDrawer;
-    } else if (!rightDrawerOverridden && displayedRightDrawer != _rightDrawer) {
-        displayedRightDrawer = _rightDrawer;
+    } else if (!rightDrawerOverridden && displayedRightDrawer != self.rightDrawer) {
+        displayedRightDrawer = self.rightDrawer;
     }
     
     //Ensure the correct buttons are shown
@@ -278,33 +275,33 @@
     rightBarButtonAdded = NO;
     leftBarButtonAdded = NO;
     
-    if (!_currentRootViewController)
+    if (!self.rootViewController)
         return;
     
     //CASE 1: Not hiding buttons
     if (!hideNavigationBarButtons) {
         
         //Check if right should be set (drawer set and not trampling existing button)
-        if (displayedRightDrawer && !_currentRootViewController.navigationItem.rightBarButtonItem) {
-            [_currentRootViewController.navigationItem setRightBarButtonItem:rightBarButton];
+        if (displayedRightDrawer && !self.rootViewController.navigationItem.rightBarButtonItem) {
+            [self.rootViewController.navigationItem setRightBarButtonItem:rightBarButton];
             rightBarButtonAdded = YES;
             //Check if right was removed and button had been set, then we remove the button
-        } else if (!displayedRightDrawer && _currentRootViewController.navigationItem.rightBarButtonItem == rightBarButton) {
-            [_currentRootViewController.navigationItem setRightBarButtonItem:nil];
+        } else if (!displayedRightDrawer && self.rootViewController.navigationItem.rightBarButtonItem == rightBarButton) {
+            [self.rootViewController.navigationItem setRightBarButtonItem:nil];
             //If we get here, we need a button and we have already set it. So we don't add it again, but set the BOOL to YES
-        } else if (_currentRootViewController.navigationItem.rightBarButtonItem == rightBarButton) {
+        } else if (self.rootViewController.navigationItem.rightBarButtonItem == rightBarButton) {
             rightBarButtonAdded = YES;
         }
         
         //Check if left should be set (drawer set and not trampling existing button)
-        if (displayedLeftDrawer && !_currentRootViewController.navigationItem.leftBarButtonItem) {
-            [_currentRootViewController.navigationItem setLeftBarButtonItem:leftBarButton];
+        if (displayedLeftDrawer && !self.rootViewController.navigationItem.leftBarButtonItem) {
+            [self.rootViewController.navigationItem setLeftBarButtonItem:leftBarButton];
             leftBarButtonAdded = YES;
             //Check if right left removed and button had been set, then we remove the button
-        } else if (!displayedLeftDrawer && _currentRootViewController.navigationItem.leftBarButtonItem == leftBarButton) {
-            [_currentRootViewController.navigationItem setLeftBarButtonItem:nil];
+        } else if (!displayedLeftDrawer && self.rootViewController.navigationItem.leftBarButtonItem == leftBarButton) {
+            [self.rootViewController.navigationItem setLeftBarButtonItem:nil];
             //If we get here, we need a button and we have already set it. So we don't add it again, but set the BOOL to YES
-        } else if (_currentRootViewController.navigationItem.leftBarButtonItem == leftBarButton) {
+        } else if (self.rootViewController.navigationItem.leftBarButtonItem == leftBarButton) {
             leftBarButtonAdded = YES;
         }
         
@@ -312,12 +309,12 @@
     } else {
         
         // Check if right button need to be removed
-        if (_currentRootViewController.navigationItem.rightBarButtonItem == rightBarButton)
-            [_currentRootViewController.navigationItem setRightBarButtonItem:nil];
+        if (self.rootViewController.navigationItem.rightBarButtonItem == rightBarButton)
+            [self.rootViewController.navigationItem setRightBarButtonItem:nil];
         
         // Check if left button need to be removed
-        if (_currentRootViewController.navigationItem.leftBarButtonItem == leftBarButton)
-            [_currentRootViewController.navigationItem setLeftBarButtonItem:nil];
+        if (self.rootViewController.navigationItem.leftBarButtonItem == leftBarButton)
+            [self.rootViewController.navigationItem setLeftBarButtonItem:nil];
     }   
 }
 
@@ -365,7 +362,7 @@
     
     //Set drawer view frame
     //int drawerWidth = drawerVC.drawerView.frame.size.width;
-    //int drawerX = (direction == kSHOW_LEFT) ? 0 : (_navigationController.view.frame.size.width-DRAWER_WIDTH);
+    //int drawerX = (direction == kSHOW_LEFT) ? 0 : (self.navigationController.view.frame.size.width-DRAWER_WIDTH);
     [drawerVC.view setFrame:CGRectMake(0, 0, self.navigationController.view.frame.size.width, self.navigationController.view.frame.size.height)];
     drawerVC.drawerView.frame = CGRectMake(0, 
                                            drawerVC.drawerView.frame.origin.y, 
@@ -441,10 +438,10 @@
     //The animation blocks are created here. This way, if the dismissal is not animated, they can just be run outside of the animation method.
     //Block to set new positions (animation if animated)
     void (^setNewPositionsBlock)() = ^{        
-        [_navigationController.view setFrame:CGRectMake(0, 
-                                      _navigationController.view.frame.origin.y, 
-                                      _navigationController.view.frame.size.width, 
-                                      _navigationController.view.frame.size.height)];
+        [self.navigationController.view setFrame:CGRectMake(0, 
+                                      self.navigationController.view.frame.origin.y, 
+                                      self.navigationController.view.frame.size.width, 
+                                      self.navigationController.view.frame.size.height)];
         [dropShadowView setFrame:CGRectMake((direction == kHIDE_LEFT) ? 0-20 : 0+20, 
                                             dropShadowView.frame.origin.y, 
                                             dropShadowView.frame.size.width, 
@@ -480,17 +477,12 @@
 
 #pragma mark - MGAMenuController API
 
-- (UIViewController *) rootViewController 
+- (void) changeRootViewController:(UIViewController *) viewController 
 {
-    return _currentRootViewController;
+    [self changeRootViewController:viewController animated:NO];
 }
 
-- (void) setRootViewController:(UIViewController *) viewController 
-{
-    [self setRootViewController:viewController animated:NO];
-}
-
-- (void) setRootViewController:(UIViewController *) viewController animated:(BOOL)animated 
+- (void) changeRootViewController:(UIViewController *) viewController animated:(BOOL)animated 
 {    
     //Animate if rightDrawer is currently visible
     if ((rightDrawerVisible || leftDrawerVisible) && animated) {
@@ -501,14 +493,14 @@
                          animations:^{
                              int offsetX = 0;
                              if (leftDrawerVisible) {
-                                 offsetX = _navigationController.view.frame.size.width-self.leftDrawerWidth+20;
+                                 offsetX = self.navigationController.view.frame.size.width-self.leftDrawerWidth+20;
                              } else {
-                                 offsetX = -(_navigationController.view.frame.size.width-self.rightDrawerWidth+230);
+                                 offsetX = -(self.navigationController.view.frame.size.width-self.rightDrawerWidth+230);
                              }
-                             [_navigationController.view setFrame:CGRectMake(_navigationController.view.frame.origin.x+offsetX, 
-                                                             _navigationController.view.frame.origin.y, 
-                                                             _navigationController.view.frame.size.width, 
-                                                             _navigationController.view.frame.size.height)];
+                             [self.navigationController.view setFrame:CGRectMake(self.navigationController.view.frame.origin.x+offsetX, 
+                                                             self.navigationController.view.frame.origin.y, 
+                                                             self.navigationController.view.frame.size.width, 
+                                                             self.navigationController.view.frame.size.height)];
                              [dropShadowView setFrame:CGRectMake(dropShadowView.frame.origin.x+offsetX, 
                                                                  dropShadowView.frame.origin.y, 
                                                                  dropShadowView.frame.size.width, 
@@ -549,40 +541,40 @@
         else
             drawerVC = displayedRightDrawer;
         
-        UIGraphicsBeginImageContext(_navigationController.view.bounds.size);
-        [_navigationController.view.layer renderInContext:UIGraphicsGetCurrentContext()];
+        UIGraphicsBeginImageContext(self.navigationController.view.bounds.size);
+        [self.navigationController.view.layer renderInContext:UIGraphicsGetCurrentContext()];
         __block UIImageView *rootViewImage = [[UIImageView alloc] initWithImage:UIGraphicsGetImageFromCurrentImageContext()];
         UIGraphicsEndImageContext();
         
-        int indexOfNavigationView = [[_containerView subviews] indexOfObject:_navigationController.view]; //Save index to insert of views in proper position
-        CGRect currentRootFrame = _navigationController.view.frame; //Frame of the root view before animation
+        int indexOfNavigationView = [[self.containerView subviews] indexOfObject:self.navigationController.view]; //Save index to insert of views in proper position
+        CGRect currentRootFrame = self.navigationController.view.frame; //Frame of the root view before animation
         [rootViewImage setFrame:currentRootFrame];
         //Move navigation controller to middle of screen (this moves the root view controller view also)
-        [_navigationController.view setFrame:CGRectMake(_navigationController.view.frame.size.width, 
+        [self.navigationController.view setFrame:CGRectMake(self.navigationController.view.frame.size.width, 
                                                         0, 
-                                                        _navigationController.view.frame.size.width, 
-                                                        _navigationController.view.frame.size.height)];
+                                                        self.navigationController.view.frame.size.width, 
+                                                        self.navigationController.view.frame.size.height)];
         
-        [_containerView insertSubview:rootViewImage atIndex:indexOfNavigationView];
-        [_navigationController pushViewController:viewController animated:NO];
+        [self.containerView insertSubview:rootViewImage atIndex:indexOfNavigationView];
+        [self.navigationController pushViewController:viewController animated:NO];
 
         [UIView animateWithDuration:0.3 animations:^{
-            [_navigationController.view setFrame:CGRectMake(0, 
+            [self.navigationController.view setFrame:CGRectMake(0, 
                                                             0, 
-                                                            _navigationController.view.frame.size.width, 
-                                                            _navigationController.view.frame.size.height)];
+                                                            self.navigationController.view.frame.size.width, 
+                                                            self.navigationController.view.frame.size.height)];
             
-            [dropShadowView setFrame:CGRectMake(dropShadowView.frame.origin.x-_navigationController.view.frame.size.width, 
+            [dropShadowView setFrame:CGRectMake(dropShadowView.frame.origin.x-self.navigationController.view.frame.size.width, 
                                                 dropShadowView.frame.origin.y, 
                                                 dropShadowView.frame.size.width, 
                                                 dropShadowView.frame.size.height)];
             
-            [drawerVC.view setFrame:CGRectMake(-_navigationController.view.frame.size.width, 
+            [drawerVC.view setFrame:CGRectMake(-self.navigationController.view.frame.size.width, 
                                                0, 
                                                drawerVC.view.frame.size.width, 
                                                drawerVC.view.frame.size.height)];
             
-            [rootViewImage setFrame:CGRectMake(rootViewImage.frame.origin.x-_navigationController.view.frame.size.width, 
+            [rootViewImage setFrame:CGRectMake(rootViewImage.frame.origin.x-self.navigationController.view.frame.size.width, 
                                                rootViewImage.frame.origin.y,  
                                                rootViewImage.frame.size.width,  
                                                rootViewImage.frame.size.height)];
@@ -604,7 +596,7 @@
         }];
     //Not animated
     } else {
-        [_navigationController pushViewController:viewController animated:YES];
+        [self.navigationController pushViewController:viewController animated:YES];
     }
 }
 
@@ -614,8 +606,8 @@
 - (void)navigationController:(UINavigationController *)navController willShowViewController:(UIViewController *)viewController animated:(BOOL)animated 
 {    
     //Always hide defaut navigation bar on root
-    if (viewController == _currentRootViewController) {
-        rootView = _currentRootViewController.view;
+    if (viewController == self.rootViewController) {
+        rootView = self.rootViewController.view;
         if (leftDrawerVisible && !changingRootView) {
             [self dismissDrawer:displayedLeftDrawer Direction:kHIDE_LEFT animated:NO];
         } else if (rightDrawerVisible && !changingRootView) {
@@ -639,18 +631,18 @@
         //Move accordingly depending what drawer is visible
         if (leftDrawerVisible) {
             [dropShadowView setFrame:CGRectMake(dropShadowView.frame.origin.x, dropShadowView.frame.origin.y, dropShadowView.frame.size.width, 460)];
-            [_rightDrawer.drawerView setFrame:CGRectMake(_rightDrawer.drawerView.frame.origin.x, _rightDrawer.drawerView.frame.origin.y , _rightDrawer.drawerView.frame.size.width, 460)];
+            [self.rightDrawer.drawerView setFrame:CGRectMake(self.rightDrawer.drawerView.frame.origin.x, self.rightDrawer.drawerView.frame.origin.y , self.rightDrawer.drawerView.frame.size.width, 460)];
         } else if (rightDrawerVisible) {
-            [dropShadowView setFrame:CGRectMake(320-_rightDrawer.drawerView.frame.size.width-dropShadowView.frame.size.width+20, dropShadowView.frame.origin.y, dropShadowView.frame.size.width, 460)];
-            [_rightDrawer.drawerView setFrame:CGRectMake(320-_rightDrawer.drawerView.frame.size.width, _rightDrawer.drawerView.frame.origin.y , _rightDrawer.drawerView.frame.size.width, 460)];
+            [dropShadowView setFrame:CGRectMake(320-self.rightDrawer.drawerView.frame.size.width-dropShadowView.frame.size.width+20, dropShadowView.frame.origin.y, dropShadowView.frame.size.width, 460)];
+            [self.rightDrawer.drawerView setFrame:CGRectMake(320-self.rightDrawer.drawerView.frame.size.width, self.rightDrawer.drawerView.frame.origin.y , self.rightDrawer.drawerView.frame.size.width, 460)];
         }
     } else {
         if (leftDrawerVisible) {
             [dropShadowView setFrame:CGRectMake(dropShadowView.frame.origin.x, dropShadowView.frame.origin.y, dropShadowView.frame.size.width, 300)];
-            [_rightDrawer.drawerView setFrame:CGRectMake(_rightDrawer.drawerView.frame.origin.x, _rightDrawer.drawerView.frame.origin.y , _rightDrawer.drawerView.frame.size.width, 300)];
+            [self.rightDrawer.drawerView setFrame:CGRectMake(self.rightDrawer.drawerView.frame.origin.x, self.rightDrawer.drawerView.frame.origin.y , self.rightDrawer.drawerView.frame.size.width, 300)];
         } else if (rightDrawerVisible) {
-            [dropShadowView setFrame:CGRectMake(480-_rightDrawer.drawerView.frame.size.width-dropShadowView.frame.size.width+20, dropShadowView.frame.origin.y, dropShadowView.frame.size.width, 300)];
-            [_rightDrawer.drawerView setFrame:CGRectMake(480-_rightDrawer.drawerView.frame.size.width, _rightDrawer.drawerView.frame.origin.y , _rightDrawer.drawerView.frame.size.width, 300)];
+            [dropShadowView setFrame:CGRectMake(480-self.rightDrawer.drawerView.frame.size.width-dropShadowView.frame.size.width+20, dropShadowView.frame.origin.y, dropShadowView.frame.size.width, 300)];
+            [self.rightDrawer.drawerView setFrame:CGRectMake(480-self.rightDrawer.drawerView.frame.size.width, self.rightDrawer.drawerView.frame.origin.y , self.rightDrawer.drawerView.frame.size.width, 300)];
         }
     }
 }

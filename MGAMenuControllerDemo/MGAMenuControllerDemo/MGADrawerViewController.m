@@ -93,7 +93,7 @@
     if (rowType == kPUSH) {
         [self.menuController pushViewController:[currentRow objectForKey:@"object"]];
     } else if (rowType == kSET_ROOT) {
-        [self.menuController setRootViewController:[currentRow objectForKey:@"object"] animated:YES];
+        [self.menuController changeRootViewController:[currentRow objectForKey:@"object"] animated:YES];
     } else if (rowType == kACTION_BLOCK) {
         void (^actionBlock)() = [currentRow objectForKey:@"object"];
         actionBlock();

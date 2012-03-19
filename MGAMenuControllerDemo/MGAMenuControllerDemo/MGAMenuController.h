@@ -40,6 +40,7 @@ typedef enum {
 
 @property (nonatomic, strong) UIViewController<MGADrawerViewControllerProtocol> *leftDrawer;
 @property (nonatomic, strong) UIViewController<MGADrawerViewControllerProtocol> *rightDrawer;
+@property (nonatomic, strong) UIViewController *rootViewController;
 
 @property (nonatomic, assign) NSInteger rightDrawerWidth;
 @property (nonatomic, assign) NSInteger leftDrawerWidth;
@@ -61,13 +62,10 @@ typedef enum {
 - (void) pushViewController:(UIViewController *) viewController;
 
 /** Set the rootViewController. Not recommended to be used from a sde drawer view controlle since there is no animation */
-- (void) setRootViewController:(UIViewController *) viewController;
+- (void) changeRootViewController:(UIViewController *) viewController;
 
 /** Set the rootViewController and perform animation. Should be used from the side drawer view controller */
-- (void) setRootViewController:(UIViewController *) viewController animated:(BOOL)animated;
-
-/** Return the current root view controller */
-- (UIViewController *) rootViewController;
+- (void) changeRootViewController:(UIViewController *) viewController animated:(BOOL)animated;
 
 /** Convinience method to execute selector on current rootViewController */
 - (void) sendDataToRootViewController:(id)data atSelector:(SEL)selector;
